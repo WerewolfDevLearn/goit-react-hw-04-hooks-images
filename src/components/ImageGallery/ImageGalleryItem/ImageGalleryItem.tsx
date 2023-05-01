@@ -1,7 +1,7 @@
 import { IItemImage } from "../../interfaces/interfaces";
 function ImageGalleryItem({ webformatURL, alt, largeImageURL, id, onImageClick }: IItemImage) {
   const getLargeImageURL = (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
-    onImageClick({ url: event.currentTarget.dataset.largeimageurl, alt: event.currentTarget.alt });
+    onImageClick({ url: event.currentTarget.dataset.largeimageurl!, alt: event.currentTarget.alt });
   };
   return (
     <img
