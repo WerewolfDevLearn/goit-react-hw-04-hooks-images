@@ -74,7 +74,6 @@ export default function App() {
     }
   };
 
-  console.log(largeImageURL);
   return (
     <>
       <SearchBar onSubmitForm={onSubmitForm} />

@@ -1,32 +1,27 @@
-import { Component } from "react";
+import { useEffect } from "react";
 import { ModaLProps } from "../interfaces/interfaces";
-class Modal extends Component<ModaLProps> {
-  componentDidMount() {
-    window.addEventListener("keydown", this.pressEscBtn);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("keydown", this.pressEscBtn);
-  }
-
-  pressEscBtn = (event: KeyboardEvent) => {
-    console.log(event);
+export default function Modal({ onCloseModal, children }: ModaLProps) {
+  const pressEscBtn = (event: KeyboardEvent) => {
+    // console.log(event);
     if (event.code === "Escape") {
-      this.props.onCloseModal();
+      onCloseModal();
     }
   };
-  onOverlayClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    if (event.target === event.currentTarget) this.props.onCloseModal();
+
+  useEffect(() => {
+    window.addEventListener("keydown", pressEscBtn);
+    return () => {
+      window.removeEventListener("keydown", pressEscBtn);
+    };
+  }, []);
+  const onOverlayClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (event.target === event.currentTarget) onCloseModal();
   };
-  render() {
-    const { onCloseModal, children } = this.props;
 
-    return (
-      <div className='Overlay' onClick={this.onOverlayClick}>
-        <div className='Modal'>{children}</div>
-      </div>
-    );
-  }
+  return (
+    <div className='Overlay' onClick={onOverlayClick}>
+      <div className='Modal'>{children}</div>
+    </div>
+  );
 }
-
-export default Modal;
+// onKeyDown={pressEscBtn} tabIndex={0} role='button'
