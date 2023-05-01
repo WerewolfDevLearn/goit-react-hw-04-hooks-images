@@ -54,7 +54,7 @@ export interface IGallery {
   onImageClick(largeImageURL: IgetLargeImage): void;
 }
 export interface IgetLargeImage {
-  url: string | undefined;
+  url: string;
   alt: string;
 }
 

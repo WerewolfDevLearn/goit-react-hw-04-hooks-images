@@ -1,8 +1,7 @@
-interface IModal {
+interface Imodal {
   largeImage: { url: string; alt: string };
 }
-
-function ModalImage({ largeImage }: IModal) {
+function ModalImage({ largeImage }: Imodal) {
   const { alt, url } = largeImage;
   return <img src={url} alt={alt} />;
 }
