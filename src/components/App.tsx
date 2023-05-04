@@ -85,7 +85,7 @@ export default function App() {
           <ModalImage largeImage={largeImageURL} />
         </Modal>
       )}
-      {images.length >= 12 && !lastPage && !loading && (
+      {images.length > 12 && !lastPage && !loading && (
         <Button text='Load more' buttonAction={onLoadMore} />
       )}
       {loading && <Loader />}
