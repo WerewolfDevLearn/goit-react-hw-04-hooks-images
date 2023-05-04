@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import SearchBar from './SearchBar/SearchBar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
@@ -20,31 +20,38 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [lastPage, setLastPage] = useState(false);
 
-  const isLastPage = (data: IData) => {
-    if (images.length === data.totalHits) setLastPage(true);
-  };
-  const fetchImage = async (keyword: string, page: number) => {
-    try {
-      setLoading(true);
-      const data = await imageApi(keyword, page);
-      if (!data.total) {
-        throw new Error('Sorry. There is no photos on your request.');
-      }
-      const dataImages = data.hits.map((hit: IImage) => datafilter(hit));
-      setImages((images) => [...images, ...dataImages]);
-      isLastPage(data);
-    } catch (error: any) {
-      setMessage(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const isLastPage = useCallback(
+    (data: IData) => {
+      if (images.length === data.totalHits) setLastPage(true);
+    },
+    [images.length],
+  );
 
+  const fetchImage = useCallback(
+    async (keyword: string, page: number) => {
+      try {
+        setLoading(true);
+        const data = await imageApi(keyword, page);
+        if (!data.total) {
+          throw new Error('Sorry. There is no photos on your request.');
+        }
+        const dataImages = data.hits.map((hit: IImage) => datafilter(hit));
+        setImages((images) => [...images, ...dataImages]);
+        isLastPage(data);
+      } catch (error: any) {
+        setMessage(error.message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [isLastPage],
+  );
   useEffect(() => {
     if (!keyword) return;
     setMessage('');
     fetchImage(keyword, page);
-  }, [fetchImage, keyword, page]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyword, page]);
 
   useEffect(() => {
     if (images.length >= 2) scrollDown();
@@ -78,7 +85,7 @@ export default function App() {
           <ModalImage largeImage={largeImageURL} />
         </Modal>
       )}
-      {images.length >= 11 && !lastPage && !loading && (
+      {images.length >= 12 && !lastPage && !loading && (
         <Button text='Load more' buttonAction={onLoadMore} />
       )}
       {loading && <Loader />}
