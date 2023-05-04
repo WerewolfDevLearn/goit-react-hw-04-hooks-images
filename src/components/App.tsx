@@ -1,36 +1,37 @@
-import { useState, useEffect } from "react";
-import SearchBar from "./SearchBar/SearchBar";
-import ImageGallery from "./ImageGallery/ImageGallery";
-import Button from "./Button/Button";
-import Loader from "./Loader/Loader";
-import Modal from "./Modal/Modal";
-import ModalImage from "./ModalImage/ModalImage";
-import Message from "./Message/Message";
-import imageApi from "../service/api.js";
-import scrollDown from "../service/scroll";
-import datafilter from "../service/datafilter";
-import { IData, IgetLargeImage, IImage } from "./interfaces/interfaces";
+import { useState, useEffect } from 'react';
+import SearchBar from './SearchBar/SearchBar';
+import ImageGallery from './ImageGallery/ImageGallery';
+import Button from './Button/Button';
+import Loader from './Loader/Loader';
+import Modal from './Modal/Modal';
+import ModalImage from './ModalImage/ModalImage';
+import Message from './Message/Message';
+import imageApi from '../service/api.js';
+import scrollDown from '../service/scroll';
+import datafilter from '../service/datafilter';
+import { IData, IgetLargeImage, IImage } from './interfaces/interfaces';
 
 export default function App() {
   const [images, setImages] = useState<IImage[]>([]);
-  const [keyword, setKeyword] = useState("");
+  const [keyword, setKeyword] = useState('');
   const [page, setPage] = useState(1);
-  const [largeImageURL, setLargeImageURL] = useState<IgetLargeImage>({ url: "", alt: "" });
-  const [message, setMessage] = useState("");
+  const [largeImageURL, setLargeImageURL] = useState<IgetLargeImage>({ url: '', alt: '' });
+  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [lastPage, setLastPage] = useState(false);
 
-  const fetchImage = async () => {
+  const isLastPage = (data: IData) => {
+    if (images.length === data.totalHits) setLastPage(true);
+  };
+  const fetchImage = async (keyword: string, page: number) => {
     try {
       setLoading(true);
       const data = await imageApi(keyword, page);
       if (!data.total) {
-        throw new Error("Sorry. There is no photos on your request.");
+        throw new Error('Sorry. There is no photos on your request.');
       }
       const dataImages = data.hits.map((hit: IImage) => datafilter(hit));
-      setImages([...images, ...dataImages]);
-      setPage(page + 1);
-      setMessage("");
+      setImages((images) => [...images, ...dataImages]);
       isLastPage(data);
     } catch (error: any) {
       setMessage(error.message);
@@ -38,26 +39,22 @@ export default function App() {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    if (!keyword) {
-      return;
-    }
-
-    fetchImage();
-  }, [keyword]);
 
   useEffect(() => {
-    if (page > 2) {
-      scrollDown();
-    }
-  }, [page]);
+    if (!keyword) return;
+    setMessage('');
+    fetchImage(keyword, page);
+  }, [fetchImage, keyword, page]);
+
+  useEffect(() => {
+    if (images.length >= 2) scrollDown();
+  }, [images.length]);
 
   const onSubmitForm = (query: string) => {
     if (!query) return;
     setKeyword(query);
     setPage(1);
     setImages([]);
-    setLoading(false);
   };
 
   const saveLargeImage = (largeImageURL: IgetLargeImage) => {
@@ -65,13 +62,11 @@ export default function App() {
   };
 
   const hideLargeImage = () => {
-    setLargeImageURL({ url: "", alt: "" });
+    setLargeImageURL({ url: '', alt: '' });
   };
 
-  const isLastPage = (data: IData) => {
-    if (images.length === data.totalHits) {
-      setLastPage(true);
-    }
+  const onLoadMore = () => {
+    setPage((page) => page + 1);
   };
 
   return (
@@ -83,7 +78,9 @@ export default function App() {
           <ModalImage largeImage={largeImageURL} />
         </Modal>
       )}
-      {images.length >= 11 && !lastPage && !loading && <Button text='Load more' buttonAction={fetchImage} />}
+      {images.length >= 11 && !lastPage && !loading && (
+        <Button text='Load more' buttonAction={onLoadMore} />
+      )}
       {loading && <Loader />}
       {message && <Message message={message} />}
     </>

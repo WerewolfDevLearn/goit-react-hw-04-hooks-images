@@ -1,25 +1,35 @@
-import { useEffect } from "react";
-import { ModaLProps } from "../interfaces/interfaces";
+import { useCallback, useEffect, useRef } from 'react';
+import { ModaLProps } from '../interfaces/interfaces';
 export default function Modal({ onCloseModal, children }: ModaLProps) {
-  const pressEscBtn = (event: KeyboardEvent) => {
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  const pressEscBtn = (event: React.KeyboardEvent<HTMLDivElement>) => {
     // console.log(event);
-    if (event.code === "Escape") {
+    if (event.code === 'Escape') {
       onCloseModal();
     }
   };
-
   useEffect(() => {
-    window.addEventListener("keydown", pressEscBtn);
-    return () => {
-      window.removeEventListener("keydown", pressEscBtn);
-    };
-  }, []);
+    if (overlayRef.current) {
+      const currentOverlayRef = overlayRef.current;
+      currentOverlayRef.addEventListener('keydown', pressEscBtn);
+      return () => {
+        currentOverlayRef.removeEventListener('keydown', pressEscBtn);
+      };
+    }
+  }, [pressEscBtn]);
   const onOverlayClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (event.target === event.currentTarget) onCloseModal();
   };
-
   return (
-    <div className='Overlay' onClick={onOverlayClick}>
+    <div
+      className='Overlay'
+      onClick={onOverlayClick}
+      onKeyDown={pressEscBtn}
+      role='button'
+      tabIndex={0}
+      ref={overlayRef}
+    >
       <div className='Modal'>{children}</div>
     </div>
   );
