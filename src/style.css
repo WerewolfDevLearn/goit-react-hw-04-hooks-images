@@ -12,8 +12,8 @@ html {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue",
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+    'Helvetica Neue', sans-serif;
   color: #212121;
   background-color: #fff;
   -webkit-font-smoothing: antialiased;
@@ -76,7 +76,7 @@ img {
   width: 48px;
   height: 48px;
   border: 0;
-  background-image: url("./images/9167481041582962173.svg");
+  background-image: url('./images/9167481041582962173.svg');
   background-size: 40%;
   background-repeat: no-repeat;
   background-position: center;
@@ -177,6 +177,7 @@ img {
 .Modal {
   max-width: calc(100vw - 48px);
   max-height: calc(100vh - 24px);
+  outline: none;
 }
 
 /*
