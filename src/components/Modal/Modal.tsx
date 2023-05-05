@@ -1,16 +1,15 @@
-import { useCallback, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { ModaLProps } from '../interfaces/interfaces';
 export default function Modal({ onCloseModal, children }: ModaLProps) {
   const overlayRef = useRef<HTMLHeadingElement>(null);
-  const pressEscBtn = useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
-      console.log(event);
-      if (event.code === 'Escape') {
-        onCloseModal();
-      }
-    },
-    [onCloseModal],
-  );
+
+  const pressEscBtn = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    console.log(event);
+    if (event.code === 'Escape') {
+      onCloseModal();
+    }
+  };
+
   const onOverlayClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (event.target === event.currentTarget) onCloseModal();
   };
@@ -31,10 +30,3 @@ export default function Modal({ onCloseModal, children }: ModaLProps) {
     </div>
   );
 }
-// onKeyDown={pressEscBtn} tabIndex={0} role='button'
-// useEffect(() => {
-//   window.addEventListener('keydown', (e) => pressEscBtn(e));
-//   return () => {
-//     window.removeEventListener('keydown', pressEscBtn);
-//   };
-// }, [pressEscBtn]);
